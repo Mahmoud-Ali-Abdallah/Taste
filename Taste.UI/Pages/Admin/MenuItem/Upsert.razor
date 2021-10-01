@@ -1,0 +1,272 @@
+﻿@page "/Admin/MenuItem/Upsert/{MenuItemId:int?}"
+
+@using System
+@using System.IO
+@using Microsoft.AspNetCore.Hosting
+@using System.IO
+
+@inject IWebHostEnvironment Environment
+@inject IJSRuntime  _js
+
+@inject IMenuItemService _menuItemService
+@inject ICategoryService _categoryService
+@inject IFoodTypeService _foodTypeService
+
+
+@if (menuItemVM != null && menuItemVM.MenuItem != null)
+{
+    <EditForm Model="@menuItemVM" OnValidSubmit="@AddOrUpdate">
+        <ObjectGraphDataAnnotationsValidator />
+
+        <div class="container">
+            <div class="row px-2 mx-2 backgroundWhite border">
+                @if (MenuItemId != null)
+                {
+                    <input type="hidden" @bind-value="@menuItemVM.MenuItem.Id" />
+                }
+
+                <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                    <h2 class="text-primary">@(MenuItemId != null ? "Update " : "Create ") Menu Item</h2>
+                </div>
+
+                <div class="col-8 pt-3">
+                    <div class="form-group row">
+                        <div class="col-3">
+                            <label for="">Menu Item Name</label>
+                        </div>
+
+                        <div class="col-9">
+                            <InputText @bind-Value="@menuItemVM.MenuItem.Name" maxlength="50" class="form-control" />
+                            <ValidationMessage For="@(() => menuItemVM.MenuItem.Name)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-3">
+                            <label for="">Price</label>
+                        </div>
+
+                        <div class="col-9">
+                            <InputNumber @bind-Value="@menuItemVM.MenuItem.Price" maxlength="50" class="form-control" />
+                            <ValidationMessage For="@(() => menuItemVM.MenuItem.Price)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-3">
+                            <label for="">Description</label>
+                        </div>
+
+                        <div class="col-9">
+                            <InputTextArea @bind-Value="@menuItemVM.MenuItem.Description" id="txtDesc" style="height:300px" class="form-control" />
+                            <ValidationMessage For="@(() => menuItemVM.MenuItem.Description)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-3">
+                            <label for="">Image</label>
+                        </div>
+
+                        <div class="col-9">
+                            <InputFile class="form-control" OnChange="@LoadFiles" multiple />
+                        </div>
+                    </div>
+
+                    @if (isLoading)
+                    {
+                        <p>Uploading...</p>
+                    }
+                    else
+                    {
+
+                    }
+
+                    <div class="form-group row">
+                        <div class="col-3">
+                            <label for="">Category Type</label>
+                        </div>
+
+                        <div class="col-9">
+                            <InputSelect @bind-Value="@menuItemVM.MenuItem.CategoryId" class="form-control">
+                                <option value="" selected disabled> -Please select a Category-</option>
+                                @foreach (var cat in menuItemVM.CategoryList)
+                                    {
+                                    <option value="@cat.Value"> @cat.Text</option>
+                                    }
+                            </InputSelect>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-3">
+                            <label for="">Food Type</label>
+                        </div>
+
+                        <div class="col-9">
+                            <InputSelect @bind-Value="@menuItemVM.MenuItem.FoodTypeId" class="form-control">
+                                <option value="" selected disabled> -Please select a Food Type-</option>
+                                @foreach (var type in menuItemVM.FoodTypeList)
+                                    {
+                                    <option value="@type.Value"> @type.Text</option>
+                                    }
+                            </InputSelect>
+                        </div>
+                    </div>
+
+                    @if (isLoading)
+                    {
+                        <p>Uploading...</p>
+                    }
+                    else
+                    {
+
+                    }
+
+
+
+                    <div class="form-group row">
+                        <div class="col-9 offset-3">
+                            <div class="row">
+                                <div class="col-6">
+                                    @if (MenuItemId != null)
+                                    {
+                                        <button type="submit" class="btn btn-primary form-control">Update</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="btn btn-primary form-control">Create</button>
+
+                                    }
+                                </div>
+                                <div class="col-6">
+                                    <a href="/Admin/MenuItem/Index" class="btn btn-success form-control">Back to list</a>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+                <div class="col-4 p-4">
+                    @if (!string.IsNullOrWhiteSpace(@menuItemVM.MenuItem.Image))
+                    {
+                        <img src="@menuItemVM.MenuItem.Image" style="width: 100%;border-radius: 5px;order: 1px solid #bbb9b9;"/>
+                    }
+                </div>
+
+            </div>
+        </div>
+
+    </EditForm>
+}
+@code {
+
+    [Parameter]
+    public int? MenuItemId { get; set; }
+
+    MenuItemModel menuItem = new();
+
+    MenuItemViewModel menuItemVM;
+
+    private Task<IJSObjectReference> _module;
+    private Task<IJSObjectReference> Module => _module ??=
+        _js.InvokeAsync<IJSObjectReference>("import", "./js/category.js").AsTask();
+
+    IJSObjectReference module;
+
+    protected override async Task OnInitializedAsync()
+    {
+        menuItemVM = new MenuItemViewModel()
+        {
+            CategoryList = await _categoryService.GetCategoryListForDropDown(),
+            FoodTypeList = await _foodTypeService.GetFoodTypeListForDropDown()
+
+        };
+
+        if (MenuItemId != null)
+        {
+            menuItemVM.MenuItem = await _menuItemService.GetMenuItemById(MenuItemId.Value);
+        }
+
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        module = await Module;
+
+        await module.InvokeVoidAsync("initTinyMCE");
+
+        StateHasChanged();
+    }
+    private async Task AddOrUpdate()
+    {
+
+        if (MenuItemId != null)
+        {
+            // Upadet
+
+        }
+        else
+        {
+            // Add New Category
+
+            bool isAddedSuccessfuly = await _menuItemService.AddMenuItem(menuItemVM.MenuItem);
+
+
+            if (isAddedSuccessfuly)
+            {
+                // Display Successful Toast
+            }
+            else
+            {
+                // Display Danger Tosat
+            }
+        }
+    }
+
+    private List<IBrowserFile> loadedFiles = new();
+    private long maxFileSize = 1024 * 1024 * 5;
+    private int maxAllowedFiles = 3;
+    private bool isLoading;
+    FileInfo fi;
+
+    private async Task LoadFiles(InputFileChangeEventArgs e)
+    {
+        isLoading = true;
+        loadedFiles.Clear();
+
+        foreach (var file in e.GetMultipleFiles(maxAllowedFiles))
+        {
+            try
+            {
+                loadedFiles.Add(file);
+                fi = new FileInfo(file.Name);
+
+                string fileName = Guid.NewGuid().ToString();
+                //var trustedFileNameForFileStorage = Path.GetRandomFileName();
+                //var path = Path.Combine(Environment.ContentRootPath,
+                //        Environment.EnvironmentName, "unsafe_uploads",
+                //        trustedFileNameForFileStorage);
+
+                var uploads = Path.Combine(Environment.WebRootPath, "Images/MenuItems/", fileName + fi.Extension);
+                //var extension = Path.GetExtension(file.FileName);
+                await using FileStream fs = new(uploads, FileMode.Create);
+                await file.OpenReadStream(maxFileSize).CopyToAsync(fs);
+
+                menuItemVM.MenuItem.Image = "Images/MenuItems/" + fileName + fi.Extension;
+
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        isLoading = false;
+    }
+
+}

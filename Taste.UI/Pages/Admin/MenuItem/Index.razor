@@ -1,0 +1,127 @@
+﻿@page "/Admin/MenuItem/Index"
+
+@inject IMenuItemService _menuItemService
+@inject IJSRuntime  _js
+@inject Blazored.Toast.Services.IToastService ToastService
+
+@implements IAsyncDisposable
+
+<div class="border backgroundWhite container">
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-primary">Menu Item List</h2>
+        </div>
+        <div class="col-6" style="text-align:end">
+            <a href="Admin/MenuItem/Upsert" class="btn btn-primary"><i class="fas fa-plus"></i> &nbsp;Create New</a>
+        </div>
+    </div>
+    <br /><br />
+    <table id="menuItemList" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th>Food Type</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (menuItems != null) //&& categories.Count > 0)
+            {
+                //LoadDataTable();
+
+                @foreach (var menuItem in menuItems)
+                {
+                    <tr>
+                        <td>@menuItem.Name</td>
+                        <td>@menuItem.Price</td>
+                        <td>@menuItem.Category.Name</td>
+                        <td>@menuItem.FoodType.Name</td>
+                        <td>
+                            <a href="/Admin/Category/Upsert/@menuItem.Id" class="btn btn-success"><i class="fas fa-edit"></i> Edit</a>
+                            <a @onclick="() => DeleteCategory(menuItem.Id)" class="btn btn-danger" style="color:white"><i class="fas fa-trash-alt"></i> Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+
+
+@code{
+
+    // Load the module and keep a reference to it
+    // You need to use .AsTask() to convert the ValueTask to Task as it may be awaited multiple times
+    private Task<IJSObjectReference> _module;
+    private Task<IJSObjectReference> Module => _module ??=
+        _js.InvokeAsync<IJSObjectReference>("import", "./js/category.js").AsTask();
+
+    IJSObjectReference module;
+
+    List<MenuItemModel> menuItems = new();
+
+    protected async override Task OnInitializedAsync()
+    {
+
+
+    }
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            menuItems = (await _menuItemService.GetMenuItems()).ToList();
+            StateHasChanged();
+            module = await Module;
+
+            await module.InvokeVoidAsync("initializeDataTable", "menuItemList");
+
+        }
+    }
+
+
+
+    private async Task DeleteCategory(int menuItemId)
+    {
+        //await _js.InvokeVoidAsync("Swal.fire" , "Are you sure ?");
+
+        if (await _js.Confirm("Confirm", $" Do you want to delete {menuItemId}  ?", SweetAlertMessageType.Question))
+        {
+            bool isDeletedSuccessfully = await _menuItemService.DeleteMenuItem(menuItemId);
+
+            if (isDeletedSuccessfully)
+            {
+                menuItems.RemoveAll(item => item.Id == menuItemId);
+
+                await module.InvokeVoidAsync("initializeDataTable", "menuItemList");
+
+                // Display successful message
+                ToastService.ShowSuccess("Removed successfuly");
+
+                StateHasChanged();
+            }
+            else
+            {
+                // Display toast danger Message
+            }
+
+
+        }
+
+
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module != null)
+        {
+            var module = await _module;
+            await module.DisposeAsync();
+        }
+    }
+
+}

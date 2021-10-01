@@ -1,0 +1,77 @@
+﻿@page "/Account/login/{LoginState:int?}"
+
+@inject NavigationManager _navigationManager
+@inject IUserService _userService
+
+
+<EditForm Model="user" OnValidSubmit="SignIn">
+    <DataAnnotationsValidator />
+    <div class="py-4 my-4">
+
+        <div class="row form-group">
+            <div class="col-8 offset-2">
+                <div class="card">
+                    <div class="card-body px-lg-5 pt-4">
+                        <h3 class="col-12 text-center text-success py-4"><strong>Sign In</strong></h3>
+                        <hr />
+                        <div class="form-row py-2">
+                            <div class="col">
+                                <div>
+                                    <InputText @bind-Value="@user.UserName" autocomplete="off" placeholder="User Name" class="form-control" />
+                                    <ValidationMessage For="@(() => user.UserName)" />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div>
+                                    <InputText @bind-Value="@user.Password" autocomplete="off" placeholder="Password" class="form-control" />
+                                    <ValidationMessage For="@(() => user.Password)" />
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="py-2">
+                            <button type="submit" class="btn btn-success form-button" style="width:100%">Login</button>
+                        </div>
+
+                        <hr />
+                        <p class="text-danger">@loginFail</p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+@code {
+
+    ApplicationUserModel user =
+        new ApplicationUserModel();
+
+    [Parameter]
+    public int? LoginState { get; set; }
+
+    private string loginFail = "";
+
+    protected async override Task OnInitializedAsync()
+    {
+        if (LoginState != null)
+            loginFail = "Invalid User name or password. Please try again.";
+
+    }
+
+    private void SignIn()
+    {
+        //var roles = new List<string>();
+        //roles.Add("Admin");
+
+        user = new ApplicationUserModel()
+        {
+            UserName = user.UserName,
+            Password = user.Password
+
+        };
+
+        _userService.Login(user, _navigationManager.Uri);
+    }
+}

@@ -1,0 +1,41 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v5.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v5.0": {
+      "Taste.SharedUILibrary/1.0.0": {
+        "dependencies": {
+          "Microsoft.JSInterop": "5.0.7"
+        },
+        "runtime": {
+          "Taste.SharedUILibrary.dll": {}
+        }
+      },
+      "Microsoft.JSInterop/5.0.7": {
+        "runtime": {
+          "lib/net5.0/Microsoft.JSInterop.dll": {
+            "assemblyVersion": "5.0.0.0",
+            "fileVersion": "5.0.721.26309"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Taste.SharedUILibrary/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.JSInterop/5.0.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-3fUsFpgUSJEuiaPTSAWHt3o305lmOgLuVRp4uJHvsQGdfEj/7lZXF7NvcFVZsRXn8bQspSSSMEfevMY0ot4Qfg==",
+      "path": "microsoft.jsinterop/5.0.7",
+      "hashPath": "microsoft.jsinterop.5.0.7.nupkg.sha512"
+    }
+  }
+}

@@ -1,0 +1,76 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<header>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-primary border-bottom box-shadow mb-3">
+        <div class="container">
+            <a class="navbar-brand text-white" href="/Customer/Home/Index">Taste</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                <partial name="_LoginPartial">
+                    <ul class="navbar-nav  d-flex">
+
+                        <AuthorizeView>
+                            <Authorized>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" href="/logout">logout</a>
+                                </li>
+
+
+                            </Authorized>
+                            <NotAuthorized>
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" href="/Account/Register">Register</a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link text-white" href="/Account/Login">Login</a>
+                                </li>
+                            </NotAuthorized>
+                        </AuthorizeView>
+
+                    </ul>
+                </partial>
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/Customer/Home/Index">Home</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link text-white dropdown-toggle" href="#" id="navbarDropDown" data-toggle="dropdown">
+                            Admin
+                        </a>
+                        <div class="dropdown-menu bg-primary">
+                            <a class="dropdown-item text-white" href="/Admin/Category/index">Category</a>
+                            <a class="dropdown-item text-white" href="/Admin/FoodType/index">Food Type</a>
+                            <a class="dropdown-item text-white" href="/Admin/MenuItem/index">Menu Item</a>
+                            <a class="dropdown-item text-white" href="/Admin/User/index">Users</a>
+                        </div>
+                    </li>
+                </ul>
+
+            </div>
+
+
+        </div>
+    </nav>
+</header>
+@code {
+
+    string userAuthenticated;
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity.IsAuthenticated)
+        {
+            userAuthenticated = $"{ user.Identity.Name} is authenticated.";
+        }
+        else
+        {
+            userAuthenticated = "The user is NOT authenticated.";
+        }
+    }
+}

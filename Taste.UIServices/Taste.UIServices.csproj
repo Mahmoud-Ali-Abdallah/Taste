@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Taste.SharedModels\Taste.SharedModels.csproj" />
+    <ProjectReference Include="..\Taste.Utility\Taste.Utility.csproj" />
+  </ItemGroup>
+
+</Project>

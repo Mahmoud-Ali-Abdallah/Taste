@@ -1,0 +1,112 @@
+﻿@page "/Admin/FoodType/Upsert/{FoodTypeIdId:int?}"
+
+@inject IFoodTypeService _foodTypeService
+
+
+<EditForm Model="@foodType" OnValidSubmit="@AddOrUpdate">
+    <DataAnnotationsValidator />
+
+    <div class="container">
+        <div class="row px-2 mx-2 backgroundWhite border">
+            @if (FoodTypeIdId != null)
+            {
+                <input type="hidden" @bind-value="@foodType.Id" />
+            }
+
+            <div class="col-12 px-3" style="border-bottom:1px solid #325d88">
+                <h2 class="text-primary">@(FoodTypeIdId != null ? "Update " : "Create ") Category</h2>
+            </div>
+
+            <div class="col-8 pt-3">
+                <div class="form-group row">
+                    <div class="col-3">
+                        <label for="">Category Name</label>
+                    </div>
+
+                    <div class="col-9">
+                        <InputText @bind-Value="@foodType.Name" maxlength="50" class="form-control" />
+                        <ValidationMessage For="@(() => foodType.Name)" />
+                    </div>
+                </div>
+
+
+
+                <div class="form-group row">
+                    <div class="col-9 offset-3">
+                        <div class="row">
+                            <div class="col-6">
+                                @if (FoodTypeIdId != null)
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Update</button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-primary form-control">Create</button>
+
+                                }
+                            </div>
+                            <div class="col-6">
+                                <a href="/Admin/FoodType/Index" class="btn btn-success form-control">Back to list</a>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</EditForm>
+
+@code {
+
+    [Parameter]
+    public int? FoodTypeIdId { get; set; }
+
+    private FoodTypeModel foodType = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (FoodTypeIdId != null)
+        {
+            foodType = await _foodTypeService.GetFoodTypeById(FoodTypeIdId.Value);
+        }
+        else
+        {
+
+        }
+    }
+
+    private async Task AddOrUpdate()
+    {
+
+        if (FoodTypeIdId != null)
+        {
+            // Upadet
+
+        }
+        else
+        {
+            // Add New Category
+
+            bool isAddedSuccessfuly = await _foodTypeService.AddFoodType(foodType);
+
+
+            if (isAddedSuccessfuly)
+            {
+                // Display Successful Toast
+            }
+            else
+            {
+                // Display Danger Tosat
+            }
+        }
+
+
+
+    }
+
+}

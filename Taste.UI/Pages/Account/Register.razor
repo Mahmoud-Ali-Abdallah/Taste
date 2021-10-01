@@ -1,0 +1,101 @@
+﻿@page "/Account/Register"
+
+@inject IUserService _userService
+@inject ILocalStorageService _localStorage 
+@inject NavigationManager _nav
+
+@using Taste.SharedModels.ViewModels.Account
+@using Taste.Utility
+
+<EditForm Model="RegisterViewModel" OnValidSubmit="SignUp" autocomplete="off">
+    <DataAnnotationsValidator />
+    <div class="py-4 my-4">
+
+        <div class="row form-group">
+            <div class="col-8 offset-2">
+                <div class="card">
+                    <div class="card-body px-lg-5 pt-4">
+                        <h3 class="col-12 text-center text-success py-4"><strong>Sign Up</strong></h3>
+                        <hr />
+                        <div class="form-row py-2">
+                            <div class="col">
+                                <div>
+                                    <InputText @bind-Value="@RegisterViewModel.FirstName" autocomplete="off" placeholder="FirstName" class="form-control" />
+                                    <ValidationMessage For="@(() => RegisterViewModel.FirstName)" />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div>
+                                    <InputText @bind-Value="@RegisterViewModel.LastName" autocomplete="off" placeholder="LastName" class="form-control" />
+                                    <ValidationMessage For="@(() => RegisterViewModel.LastName)" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="py-2">
+
+                            <InputText @bind-Value="@RegisterViewModel.Email" autocomplete="off" placeholder="Email" class="form-control" />
+                            <ValidationMessage For="@(() => RegisterViewModel.Email)" />
+
+                        </div>
+                        <div class="py-2">
+
+                            <InputText @bind-Value="@RegisterViewModel.PhoneNumber" autocomplete="off" placeholder="PhoneNumber" class="form-control" />
+                            <ValidationMessage For="@(() => RegisterViewModel.PhoneNumber)" />
+
+                        </div>
+                        <div class="py-2">
+
+                            <InputText @bind-Value="@RegisterViewModel.Password" autocomplete="off" placeholder="Password" class="form-control" />
+                            <ValidationMessage For="@(() => RegisterViewModel.Password)" />
+
+                        </div>
+                        <div class="py-2">
+
+                            <InputText @bind-Value="@RegisterViewModel.ConfirmPassword" autocomplete="off" placeholder="ConfirmPassword" class="form-control" />
+                            <ValidationMessage For="@(() => RegisterViewModel.ConfirmPassword)" />
+
+                        </div>
+
+                        <div class="py-2">
+                            <button type="submit" class="btn btn-success form-button" style="width:100%">Register</button>
+                        </div>
+                        <div class="py-2">
+                            @*<InputRadio  Value="RegisterViewModel.RoleName"/>
+                                <InputRadio value="RoleConfig.CustomerRole" />
+                                <InputRadio value="RoleConfig.FrontDeskRole" />
+                                <InputRadio value="RoleConfig.KitchenRole" />*@
+                        </div>
+                        <hr />
+                        <p>By clicking <em>Register</em> you agree to our <a href="" target="_blank">term of service</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+
+    private RegisterViewModel RegisterViewModel { get; set; } = new RegisterViewModel();
+
+
+    private async Task SignUp()
+    {
+        var res = await _userService.RegisterUser(RegisterViewModel);
+
+        if (res.StatusCode == StatusCode.Created)
+        {
+            // Save User Token To Local Storage or Session
+            await _localStorage.SetItem<string>("Token", res.Token);
+
+            // Add Authenticattion to header
+            _userService.InjectTokenToHttp(res.Token);
+
+            // Navigate User To Main Page
+            _nav.NavigateTo("/");
+
+        }
+
+    }
+
+}

@@ -1,0 +1,118 @@
+﻿@page "/Admin/Category/Index"
+
+@inject ICategoryService _categoryService
+@inject IJSRuntime  _js
+@inject Blazored.Toast.Services.IToastService ToastService
+
+@implements IAsyncDisposable
+
+@*@attribute [Authorize(Roles ="")]*@
+
+<div class="border backgroundWhite container">
+    <div class="row">
+        <div class="col-6">
+            <h2 class="text-primary">Category List</h2>
+        </div>
+        <div class="col-6" style="text-align:end">
+            <a href="/Admin/Category/Upsert" class="btn btn-primary"><i class="fas fa-plus"></i> &nbsp;Create New</a>
+        </div>
+    </div>
+    <br /><br />
+    <table id="categoryList" class="table table-striped table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>Category Name</th>
+                <th>Display Order</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (categories != null) //&& categories.Count > 0)
+            {
+                //LoadDataTable();
+
+                @foreach (var category in categories)
+                {
+                    <tr>
+                        <td>@category.Name</td>
+                        <td>@category.DisplayOrder</td>
+                        <td>
+                            <a href="/Admin/Category/Upsert/@category.Id" class="btn btn-success"><i class="fas fa-edit"></i> Edit</a>
+                            <a @onclick="() => DeleteCategory(category.Id)" class="btn btn-danger" style="color:white"><i class="fas fa-trash-alt"></i> Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+
+
+@code{
+
+    // Load the module and keep a reference to it
+    // You need to use .AsTask() to convert the ValueTask to Task as it may be awaited multiple times
+    private Task<IJSObjectReference> _module;
+    private Task<IJSObjectReference> Module => _module ??=
+        _js.InvokeAsync<IJSObjectReference>("import", "./js/category.js").AsTask();
+
+    IJSObjectReference module;
+
+    List<CategoryModel> categories = new();
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            categories = (await _categoryService.GetCategories()).ToList();
+            StateHasChanged();
+            module = await Module;
+
+            await module.InvokeVoidAsync("initializeDataTable", "categoryList");
+
+        }
+    }
+
+
+
+    private async Task DeleteCategory(int catId)
+    {
+        //await _js.InvokeVoidAsync("Swal.fire" , "Are you sure ?");
+
+        if (await _js.Confirm("Confirm", $" Do you want to delete {catId}  ?", SweetAlertMessageType.Question))
+        {
+            bool isDeletedSuccessfully = await _categoryService.DeleteCategory(catId);
+
+            if (isDeletedSuccessfully)
+            {
+                categories.RemoveAll(cat => cat.Id == catId);
+
+                await module.InvokeVoidAsync("initializeDataTable", "categoryList");
+
+                // Display successful message
+                ToastService.ShowSuccess("Removed successfuly");
+            }
+            else
+            {
+                // Display toast danger Message
+            }
+
+
+            StateHasChanged();
+        }
+
+
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module != null)
+        {
+            var module = await _module;
+            await module.DisposeAsync();
+        }
+    }
+
+}

@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Pages\Customer\Cart\" />
+    <Folder Include="wwwroot\Images\MenuItems\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.Toast" Version="3.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.DataAnnotations.Validation" Version="3.2.0-preview2.20160.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.8" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Taste.SharedModels\Taste.SharedModels.csproj" />
+    <ProjectReference Include="..\Taste.UILibrary\Taste.UILibrary.csproj" />
+    <ProjectReference Include="..\Taste.UIServices\Taste.UIServices.csproj" />
+    <ProjectReference Include="..\Taste.Utility\Taste.Utility.csproj" />
+  </ItemGroup>
+
+</Project>

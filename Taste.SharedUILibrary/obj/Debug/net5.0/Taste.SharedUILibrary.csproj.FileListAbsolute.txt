@@ -1,0 +1,12 @@
+C:\Users\Mahmoud\source\repos\Taste.APi\Taste.SharedUILibrary\bin\Debug\net5.0\Taste.SharedUILibrary.deps.json
+C:\Users\Mahmoud\source\repos\Taste.APi\Taste.SharedUILibrary\bin\Debug\net5.0\Taste.SharedUILibrary.dll
+C:\Users\Mahmoud\source\repos\Taste.APi\Taste.SharedUILibrary\bin\Debug\net5.0\ref\Taste.SharedUILibrary.dll
+C:\Users\Mahmoud\source\repos\Taste.APi\Taste.SharedUILibrary\bin\Debug\net5.0\Taste.SharedUILibrary.pdb
+C:\Users\Mahmoud\source\repos\Taste.APi\Taste.SharedUILibrary\obj\Debug\net5.0\Taste.SharedUILibrary.csprojAssemblyReference.cache
+C:\Users\Mahmoud\source\repos\Taste.APi\Taste.SharedUILibrary\obj\Debug\net5.0\Taste.SharedUILibrary.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Mahmoud\source\repos\Taste.APi\Taste.SharedUILibrary\obj\Debug\net5.0\Taste.SharedUILibrary.AssemblyInfoInputs.cache
+C:\Users\Mahmoud\source\repos\Taste.APi\Taste.SharedUILibrary\obj\Debug\net5.0\Taste.SharedUILibrary.AssemblyInfo.cs
+C:\Users\Mahmoud\source\repos\Taste.APi\Taste.SharedUILibrary\obj\Debug\net5.0\Taste.SharedUILibrary.csproj.CoreCompileInputs.cache
+C:\Users\Mahmoud\source\repos\Taste.APi\Taste.SharedUILibrary\obj\Debug\net5.0\Taste.SharedUILibrary.dll
+C:\Users\Mahmoud\source\repos\Taste.APi\Taste.SharedUILibrary\obj\Debug\net5.0\ref\Taste.SharedUILibrary.dll
+C:\Users\Mahmoud\source\repos\Taste.APi\Taste.SharedUILibrary\obj\Debug\net5.0\Taste.SharedUILibrary.pdb

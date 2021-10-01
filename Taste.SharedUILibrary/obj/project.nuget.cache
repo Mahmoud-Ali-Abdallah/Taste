@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "0G0MzeIxLNkuN9e+ViHHxwM6vp22a91ZeU9fU0axXNYdeOFsuBigkz9JpEBwDOenlanOpjGCiXraVJwnexWhWA==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Mahmoud\\source\\repos\\Taste.APi\\Taste.SharedUILibrary\\Taste.SharedUILibrary.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Mahmoud\\.nuget\\packages\\microsoft.jsinterop\\5.0.7\\microsoft.jsinterop.5.0.7.nupkg.sha512"
+  ],
+  "logs": []
+}
